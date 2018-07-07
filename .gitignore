@@ -2,5 +2,3 @@ node_modules
 package-lock.json
 data/*
 !**/.gitkeep
-!data/credential.json
-!data/last_submission_id.txt
