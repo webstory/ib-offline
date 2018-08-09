@@ -151,6 +151,7 @@ async function getSubmission(submission_id) {
   let rid = null
   let latest_submission_id = 0
   let last_submission_id = 0
+  let dupCount = 100
   try {
     last_submission_id = parseInt(fs.readFileSync(path.join(dataDir, 'last_submission_id.txt')).toString())
     console.log("Fetch from " + last_submission_id)
@@ -197,12 +198,19 @@ async function getSubmission(submission_id) {
     }
 
     for(let s of favList.data.submissions) {
-      if(s.submission_id <= last_submission_id) {
+      let res = await getSubmission(s.submission_id)
+
+      if(res) {
+        dupCount--;
+      } else {
+        dupCount = 100
+      }
+
+      if(dupCount < 0) {
         console.log("Latest submission " + latest_submission_id)
         fs.writeFileSync(path.join(dataDir, 'last_submission_id.txt'), latest_submission_id)
         return
       }
-      await getSubmission(s.submission_id)
     }
 
     page++
