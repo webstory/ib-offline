@@ -165,11 +165,6 @@ async function getSubmission(submission_id) {
     latest_submission_id = _.get(favList, "data.submissions[0].submission_id", 0)
 
     for(let s of favList.data.submissions) {
-      if(s.submission_id <= last_submission_id) {
-        console.log("Latest submission " + latest_submission_id)
-        fs.writeFileSync(path.join(dataDir, 'last_submission_id.txt'), latest_submission_id)
-        return
-      }
       await getSubmission(s.submission_id)
     }
   }
@@ -197,7 +192,9 @@ async function getSubmission(submission_id) {
       continue
     }
 
-    for(let s of favList.data.submissions) {
+    let submissions = _.get(favList.data, "submissions", [])
+
+    for(let s of submissions) {
       let res = await getSubmission(s.submission_id)
 
       if(res) {
